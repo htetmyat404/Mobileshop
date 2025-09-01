@@ -11,12 +11,7 @@ export default function SearchBar({ onSearch }) {
   return (
     <form
       onSubmit={handleSubmit}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "10px",
-        background: "#f0f0f0",
-      }}
+      style={{ display: "flex", justifyContent: "center", padding: "10px" }}
     >
       <input
         type="text"
