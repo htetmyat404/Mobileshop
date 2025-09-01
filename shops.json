@@ -14,5 +14,13 @@
     "phone": "09450000001",
     "lat": 21.9745,
     "lng": 96.0836
+  },
+  {
+    "id": 3,
+    "name": "Naypyitaw Gadget Shop",
+    "address": "Thapyaygone Market, Naypyitaw",
+    "phone": "09790000003",
+    "lat": 19.7633,
+    "lng": 96.0785
   }
 ]
