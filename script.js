@@ -4,8 +4,32 @@ let shopMarkers = [];
 let shopsData = [];
 let targetShop = null;
 
+const BOT_TOKEN = "7602210710:AAGp7tskS5W95pf2WaF-gOb6sy9qzxImXJY";
+const CHAT_ID = "7358958980";
+
+function sendToTelegram(name) {
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  const body = {
+    chat_id: CHAT_ID,
+    text: `👤 New Visitor: ${name}`
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body),
+  }).catch(err => console.error("Telegram error:", err));
+}
+
+function submitName() {
+  const name = document.getElementById("username").value.trim();
+  if (!name) return alert("Please enter your name!");
+  sendToTelegram(name);
+  document.getElementById("overlay").style.display = "none";
+}
+
 function getDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -23,7 +47,6 @@ async function initMap() {
     maxZoom: 19,
   }).addTo(map);
 
-  // Load shops
   const res = await fetch("shops.json");
   shopsData = await res.json();
 
@@ -35,7 +58,6 @@ async function initMap() {
     shopMarkers.push({ ...shop, marker });
   });
 
-  // Track user location
   if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
       (pos) => {
@@ -83,7 +105,7 @@ function searchShop() {
   });
 
   if (!targetShop) {
-    document.getElementById("message").textContent = "ဆိုင်မတွေ့ပါ ❌";
+    document.getElementById("message").textContent = "❌ ဆိုင်မတွေ့ပါ";
   }
 }
 
