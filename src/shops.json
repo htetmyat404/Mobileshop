@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Yangon Mobile Store",
+    "address": "Anawrahta Road, Yangon",
+    "phone": "09250000002",
+    "lat": 16.7741,
+    "lng": 96.1588
+  },
+  {
+    "id": 2,
+    "name": "Mandalay Phone Hub",
+    "address": "27th Street, Mandalay",
+    "phone": "09450000001",
+    "lat": 21.9745,
+    "lng": 96.0836
+  },
+  {
+    "id": 3,
+    "name": "Shwe Mobile Parts",
+    "address": "Sule Pagoda Rd, Yangon",
+    "phone": "09451001001",
+    "lat": 16.7765,
+    "lng": 96.1581
+  }
+]
