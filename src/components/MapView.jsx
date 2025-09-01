@@ -12,47 +12,98 @@ const shopIcon = new L.Icon({
   iconSize: [32, 32],
 });
 
-export default function MapView({ shops }) {
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export default function MapView({ shops, targetShop }) {
   const [position, setPosition] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
+    if (!navigator.geolocation) return;
+    const watch = navigator.geolocation.watchPosition(
       (pos) => {
-        setPosition([pos.coords.latitude, pos.coords.longitude]);
+        const userPos = [pos.coords.latitude, pos.coords.longitude];
+        setPosition(userPos);
+
+        if (targetShop) {
+          const dist = getDistance(
+            userPos[0],
+            userPos[1],
+            targetShop.lat,
+            targetShop.lng
+          );
+          if (dist < 0.05) {
+            setMessage("ရောက်ပါပီဗျာ...😚");
+          } else {
+            setMessage(`📍 ${dist.toFixed(2)} km လိုသေးတယ်`);
+          }
+        } else {
+          setMessage("");
+        }
       },
-      (err) => {
-        console.error(err);
-        setPosition([16.7741, 96.1588]); // Default Yangon
-      }
+      (err) => console.error(err),
+      { enableHighAccuracy: true }
     );
-  }, []);
+    return () => navigator.geolocation.clearWatch(watch);
+  }, [targetShop]);
 
   if (!position) return <p>Loading location...</p>;
 
   return (
-    <MapContainer center={position} zoom={14} style={{ height: "85vh", width: "100%" }}>
-      <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+    <div>
+      <MapContainer
+        center={position}
+        zoom={14}
+        style={{ height: "80vh", width: "100%" }}
+      >
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
 
-      {/* User Location */}
-      <Marker position={position} icon={userIcon}>
-        <Popup>You are here</Popup>
-      </Marker>
-
-      {/* Filtered Shops */}
-      {shops.map((shop) => (
-        <Marker key={shop.id} position={[shop.lat, shop.lng]} icon={shopIcon}>
-          <Popup>
-            <b>{shop.name}</b>
-            <br />
-            {shop.address}
-            <br />
-             {shop.phone}
-          </Popup>
+        {/* User marker */}
+        <Marker position={position} icon={userIcon}>
+          <Popup>You are here</Popup>
         </Marker>
-      ))}
-    </MapContainer>
+
+        {/* Shops */}
+        {shops.map((shop) => (
+          <Marker key={shop.id} position={[shop.lat, shop.lng]} icon={shopIcon}>
+            <Popup>
+              <b>{shop.name}</b>
+              <br />
+              {shop.address}
+              <br />
+              📞 {shop.phone}
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+
+      {message && (
+        <div
+          style={{
+            background: "#fffae6",
+            padding: "10px",
+            textAlign: "center",
+            fontSize: "18px",
+          }}
+        >
+          {message}
+        </div>
+      )}
+    </div>
   );
 }
