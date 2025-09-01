@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Yangon Mobile Store",
+    "address": "Anawrahta Road, Yangon",
+    "phone": "09250000002",
+    "lat": 16.7741,
+    "lng": 96.1588
+  },
+  {
+    "id": 2,
+    "name": "Mandalay Phone Hub",
+    "address": "27th Street, Mandalay",
+    "phone": "09450000001",
+    "lat": 21.9745,
+    "lng": 96.0836
+  }
+]
