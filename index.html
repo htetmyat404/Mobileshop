@@ -8,12 +8,22 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-  <h1>📱 Nearby Phone Shops</h1>
-
-  <div id="search">
-    <input type="text" id="searchInput" placeholder="🔍 Search shop name..." />
-    <button onclick="searchShop()">Search</button>
+  <!-- Overlay for name input -->
+  <div id="overlay">
+    <div class="overlay-box">
+      <h2>👋 What is your name?</h2>
+      <input type="text" id="username" placeholder="Enter your name..." />
+      <button onclick="submitName()">Start</button>
+    </div>
   </div>
+
+  <header>
+    <h1>📱 Nearby Phone Shops</h1>
+    <div id="search">
+      <input type="text" id="searchInput" placeholder="🔍 Search shop name..." />
+      <button onclick="searchShop()">Search</button>
+    </div>
+  </header>
 
   <div id="map"></div>
   <p id="message"></p>
