@@ -27,6 +27,9 @@
     .premium-btn{background:#ffd700; color:#000;}
     .free-btn{background:#4c9aff; color:#000;}
     #warningBox { background:#330000; color:#ff5555; padding:10px; border-radius:8px; margin-top:10px; display:none;}
+    .level-high {color:#00ff88; font-weight:bold;}   /* Green */
+    .level-medium {color:#ffd700; font-weight:bold;} /* Yellow */
+    .level-low {color:#ff69b4; font-weight:bold;}    /* Pink */
   </style>
 </head>
 <body>
@@ -48,12 +51,17 @@
   </div>
 
   <div id="premiumViewerPage" class="container hidden">
-    <h2 class="title">D M STYLE</h2>
-    <p class="subtitle">အဆင့်မြှင့်ခန့်မှန်းချက် နှမ်းထွက်ကိုက်ရန်</p>
+    <h2 class="title">Premium AI Prediction (Unlocked)</h2>
+    <p class="subtitle">Advanced AI-powered prediction (using last 1000 records)</p>
     <div id="nextBox-premium"></div>
     <div id="warningBox"></div>
     <table>
-      <thead><tr><th>Issue</th><th>Number</th><th>Actual</th><th>Predicted</th><th>Result</th><th>Confidence</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Issue</th><th>Number</th><th>Actual</th>
+          <th>Predicted</th><th>Result</th><th>Confidence</th><th>Level</th>
+        </tr>
+      </thead>
       <tbody id="tbody-premium"></tbody>
     </table>
   </div>
@@ -128,32 +136,43 @@
     });
   }
 
-  // --- Advanced Premium Prediction ---
+  // --- Advanced Premium Prediction (1000 history) ---
   function advancedPrediction(history){
-    const last30=history.slice(0,30);
-    const digitCounts=Array(10).fill(0);
-    last30.forEach(r=>{
-      const d=lastDigit(r.number);
+    const lastData = history.slice(0,1000);
+    const digitCounts = Array(10).fill(0);
+    lastData.forEach(r=>{
+      const d = lastDigit(r.number);
       digitCounts[d]++;
     });
-    const topDigits=[...digitCounts.map((c,i)=>({digit:i,count:c}))]
+
+    // Top 3 likely digits
+    const topDigits = [...digitCounts.map((c,i)=>({digit:i,count:c}))]
       .sort((a,b)=>b.count-a.count)
-      .slice(0,2)
+      .slice(0,3)
       .map(x=>x.digit);
 
-    const bigCount=last30.filter(r=>r.actual==="BIG").length;
-    const smallCount=last30.length-bigCount;
-    let prediction=bigCount>smallCount?"SMALL":"BIG";
-    let confidence=Math.max(bigCount,smallCount)/last30.length||0.5;
+    const bigCount = lastData.filter(r=>r.actual==="BIG").length;
+    const smallCount = lastData.length - bigCount;
 
-    const last5=last30.slice(0,5).map(r=>r.actual);
-    if(last5.every(v=>"BIG")){prediction="SMALL"; confidence=0.85;}
-    else if(last5.every(v=>"SMALL")){prediction="BIG"; confidence=0.85;}
+    let prediction = bigCount > smallCount ? "SMALL" : "BIG";
+    let confidence = Math.max(bigCount, smallCount) / lastData.length || 0.5;
+
+    // Streak detection
+    const last10 = lastData.slice(0,10).map(r=>r.actual);
+    if(last10.every(v=>v==="BIG")) { prediction="SMALL"; confidence=0.92; }
+    else if(last10.every(v=>v==="SMALL")) { prediction="BIG"; confidence=0.92; }
+
+    // Confidence Level
+    let levelClass="level-low", levelText="LOW";
+    if(confidence >= 0.9){ levelClass="level-high"; levelText="HIGH"; }
+    else if(confidence >= 0.5){ levelClass="level-medium"; levelText="MEDIUM"; }
 
     return {
       prediction,
       confidence:(confidence*100).toFixed(1),
-      likely:topDigits
+      likely: topDigits,
+      levelClass,
+      levelText
     };
   }
 
@@ -189,6 +208,7 @@
             <td><span class="${pillClass(pred.prediction)}">${predictedText}</span></td>
             <td class="${result.toLowerCase()}">${result}</td>
             <td>${pred.confidence}%</td>
+            <td class="${pred.levelClass}">${pred.levelText}</td>
           </tr>`;
       });
 
@@ -201,6 +221,7 @@
       document.getElementById("nextBox-premium").innerHTML=`
         <p><strong>Next Prediction:</strong> 
         <span class="pill ${nextPred.prediction.toLowerCase()}">${nextPred.prediction} (${nextPred.likely.join(",")})</span>
+        <span class="${nextPred.levelClass}">${nextPred.levelText}</span>
         (Confidence: ${nextPred.confidence}%)</p>`;
     });
   }
