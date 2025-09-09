@@ -1,230 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lottery Tricks AI Prediction (Unlocked)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Money Money Come Come 💸 — Bigwin Sayar! (Premium)</title>
+  <meta name="description" content="Premium Big/Small prediction with pro UI" />
+  <meta name="keywords" content="ck, lottery, wingo, big small, premium, prediction" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- Firebase (Compat for Realtime Database v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 
   <style>
-    body { background:#0a0a0f; color:#fff; font-family:sans-serif; margin:0; }
-    .container { max-width:1000px; margin:20px auto; padding:20px; background:#16161f; border-radius:16px; }
-    .hidden{display:none}
-    .title{font-size:1.6rem; font-weight:800; margin-bottom:12px; color:#ffd700;}
-    .subtitle{color:#aaa; margin-bottom:16px}
-    .pill{padding:6px 12px; border-radius:16px; font-weight:700; display:inline-block;}
-    .pill.big{background:#222; color:#ffa500;}
-    .pill.small{background:#222; color:#00aaff;}
-    .win{color:#00ff88; font-weight:700;}
-    .lose{color:#ff4757; font-weight:700;}
-    table{width:100%; border-collapse:collapse; margin-top:16px;}
-    th,td{padding:8px; border-bottom:1px solid #333;}
-    th{color:#aaa; text-align:left;}
-    .selection-btn{padding:20px; margin:10px; border-radius:12px; font-size:1.2rem; font-weight:700; cursor:pointer; border:none;}
-    .premium-btn{background:#ffd700; color:#000;}
-    .free-btn{background:#4c9aff; color:#000;}
-    #warningBox { background:#330000; color:#ff5555; padding:10px; border-radius:8px; margin-top:10px; display:none;}
-    .level-high {color:#00ff88; font-weight:bold;}   /* Green */
-    .level-medium {color:#ffd700; font-weight:bold;} /* Yellow */
-    .level-low {color:#ff69b4; font-weight:bold;}    /* Pink */
+    :root{
+      --bg-main:#07070c;
+      --glass:#0f0f17cc;
+      --border:#2b2b3b;
+      --text:#e9e9f4;
+      --sub:#a6a6bf;
+      --muted:#7a7a93;
+
+      --gold:#ffd54d;
+      --gold-2:#ffb84d;
+      --neon:#00ffb2;
+      --pill-big:#ffa500;
+      --pill-small:#00aaff;
+
+      --card-grad: linear-gradient(145deg, #151524 0%, #0b0b14 100%);
+      --glow: 0 0 28px rgba(255, 213, 77, .3);
+      --soft: 0 10px 35px rgba(0,0,0,.5);
+      --blur: blur(14px);
+
+      --tr: .35s cubic-bezier(.4,0,.2,1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family: ui-sans-serif, -apple-system, Segoe UI, Inter, Roboto, "SF Pro Display", system-ui, Arial;
+      background: radial-gradient(1000px 600px at 30% -10%, #191933 0%, #07070c 55%);
+      color: var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:28px auto;
+      padding: 16px;
+    }
+
+    /* PRO HEADER */
+    .pro-header{
+      position: relative;
+      border-radius: 22px;
+      padding: 28px 22px;
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--border);
+      box-shadow: var(--soft);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .pro-header::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 160px at 15% 0%, rgba(255,213,77,.18), transparent 60%),
+        radial-gradient(400px 120px at 85% 0%, rgba(0,255,178,.18), transparent 60%);
+      z-index:0; pointer-events:none;
+      filter: blur(8px);
+    }
+    .tag{
+      position:relative; z-index:2;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color:#dcdcf8; font-size:.9rem; letter-spacing:.3px;
+    }
+    .title{
+      position:relative; z-index:2; margin-top:14px;
+      font-weight:900; line-height:1.1;
+      font-size: clamp(28px, 4vw, 42px);
+      background: linear-gradient(90deg, #ffe38a 0%, #ff9a3c 45%, #fff2c6 80%);
+      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow: 0 0 22px rgba(255, 213, 77, .35);
+    }
+    .subtitle{
+      position:relative; z-index:2;
+      margin-top:6px; font-size:clamp(18px, 2.5vw, 22px);
+      font-weight:800; color:var(--gold);
+      text-shadow: 0 0 12px rgba(255, 213, 77, .45);
+    }
+    .desc{
+      position:relative; z-index:2;
+      margin-top:6px; color:var(--sub); font-size:1rem;
+    }
+
+    .next-box{
+      position:relative; z-index:2;
+      margin-top:16px;
+      display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+      padding:14px 16px; border-radius:14px;
+      background: linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.08));
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .next-label{ font-weight:800; color:var(--neon); letter-spacing:.3px }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 18px; border-radius:999px; font-weight:800;
+      border:2px solid transparent; letter-spacing:.6px;
+      text-transform:uppercase; font-size:.95rem;
+      transition: transform var(--tr);
+    }
+    .pill:hover{ transform: translateY(-2px) }
+    .pill.big{
+      color:var(--pill-big);
+      background: rgba(255,165,0,.16);
+      border-color: rgba(255,165,0,.45);
+      box-shadow: 0 0 16px rgba(255,165,0,.25);
+    }
+    .pill.small{
+      color:var(--pill-small);
+      background: rgba(0,170,255,.16);
+      border-color: rgba(0,170,255,.45);
+      box-shadow: 0 0 16px rgba(0,170,255,.25);
+    }
+    .conf{
+      font-weight:800; font-size:.95rem; color:#d9ffef;
+      padding:8px 12px; border-radius:10px;
+      border:1px solid rgba(0,255,178,.35);
+      background: rgba(0,255,178,.08);
+    }
+
+    /* CARD */
+    .card{
+      background: var(--card-grad);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--soft);
+      overflow:hidden;
+    }
+    .card-head{
+      display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+      justify-content:space-between; padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+    }
+    .card-title{
+      display:flex; align-items:center; gap:10px; font-weight:900;
+      letter-spacing:.4px; color:#dcdcf8;
+    }
+    .tools{ display:flex; gap:10px; flex-wrap:wrap }
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 14px; border-radius:12px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      color:var(--text); transition: var(--tr);
+      font-weight:700; font-size:.92rem;
+    }
+    .btn:hover{
+      border-color: rgba(255, 213, 77, .6);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    .stat{
+      padding:12px 16px; color:var(--sub); border-bottom:1px solid var(--border);
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+    }
+    .stat b{ color:#eaf9ff }
+
+    /* TABLE */
+    .table-wrap{ overflow:auto }
+    table{ width:100%; border-collapse:collapse; min-width:720px }
+    thead th{
+      position:sticky; top:0; z-index:1;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+      color:#b9b9d6; text-transform:uppercase; font-size:.82rem;
+      letter-spacing:.6px; padding:12px; text-align:left; border-bottom:1px solid var(--border);
+    }
+    tbody td{
+      padding:14px 12px; border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:.96rem;
+    }
+    tbody tr:hover{ background: rgba(255,255,255,.03) }
+    .issue{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; color:#bcbcd6; font-size:.86rem }
+    .win{ color:#00ffaa; font-weight:800; text-shadow: 0 0 10px rgba(0,255,170,.35) }
+    .lose{ color:#ff6b6b; font-weight:800; text-shadow: 0 0 10px rgba(255,107,107,.35) }
+    .muted{ color:var(--muted); font-size:.86rem }
+
+    /* FOOT */
+    .foot{
+      margin-top:16px; color:var(--muted); text-align:center; font-size:.92rem
+    }
+
+    @media (max-width: 720px){
+      .tools{ width:100% }
+      .btn{ flex:1; justify-content:center }
+    }
   </style>
 </head>
 <body>
-  <div id="selectionScreen" class="container">
-    <h2 class="title">Lottery Tricks AI Prediction</h2>
-    <p class="subtitle">Select mode</p>
-    <button id="premiumBtn" class="selection-btn premium-btn"><i class="fas fa-crown"></i> Premium Prediction</button>
-    <button id="freeBtn" class="selection-btn free-btn"><i class="fas fa-bolt"></i> Free Prediction</button>
-  </div>
+  <div class="wrap">
+    <!-- PRO HEADER -->
+    <section class="pro-header">
+      <span class="tag">
+        <i class="fa-solid fa-crown" style="color:var(--gold)"></i>
+        Premium Prediction · Big/Small
+      </span>
 
-  <div id="viewerPage" class="container hidden">
-    <h2 class="title">Free Prediction</h2>
-    <p class="subtitle">Pattern-based prediction (accuracy low)</p>
-    <div id="nextBox-free"></div>
-    <table>
-      <thead><tr><th>Issue</th><th>Number</th><th>Actual</th><th>Predicted</th><th>Result</th></tr></thead>
-      <tbody id="tbody-free"></tbody>
-    </table>
-  </div>
+      <h1 class="title">💸 Money Money Come Come 💸</h1>
+      <h2 class="subtitle">Bigwin Sayar!</h2>
+      <p class="desc">Thank for using.</p>
 
-  <div id="premiumViewerPage" class="container hidden">
-    <h2 class="title">Premium AI Prediction (Unlocked)</h2>
-    <p class="subtitle">Advanced AI-powered prediction (using last 1000 records)</p>
-    <div id="nextBox-premium"></div>
-    <div id="warningBox"></div>
-    <table>
-      <thead>
-        <tr>
-          <th>Issue</th><th>Number</th><th>Actual</th>
-          <th>Predicted</th><th>Result</th><th>Confidence</th><th>Level</th>
-        </tr>
-      </thead>
-      <tbody id="tbody-premium"></tbody>
-    </table>
-  </div>
+      <div class="next-box">
+        <span class="next-label"><i class="fa-solid fa-forward"></i> Next :</span>
+        <span id="next-pill" class="pill">—</span>
+        <span id="next-issue" class="conf">Issue —</span>
+      </div>
+    </section>
 
-<script>
-  // --- Firebase Config ---
-  const bigwinConfig = {
-    apiKey: "AIzaSyArgde3-Xn0boi6FO-ZfN6vPPMRdULPN24",
-    authDomain: "bigwin30-3d1e2.firebaseapp.com",
-    databaseURL: "https://bigwin30-3d1e2-default-rtdb.europe-west1.firebasedatabase.app/",
-    projectId: "bigwin30-3d1e2",
-    storageBucket: "bigwin30-3d1e2.appspot.com",
-    messagingSenderId: "214823361254",
-    appId: "1:214823361254:web:9b9f101f2134e2bc48f927"
-  };
-  const bigwinApp = firebase.initializeApp(bigwinConfig, "bigwin-main");
-  const bigwinDb = firebase.database(bigwinApp);
+    <!-- TABLE CARD -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-title">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Premium AI Prediction v1.1</span>
+        </div>
+        <div class="tools">
+          <button id="btnCsv" class="btn">
+            <i class="fa-solid fa-file-csv"></i> CSV
+          </button>
+          <button id="btnJson" class="btn">
+            <i class="fa-solid fa-code"></i> JSON
+          </button>
+        </div>
+      </div>
 
-  // --- Page Switch ---
-  const selectionScreen=document.getElementById("selectionScreen");
-  const viewerPage=document.getElementById("viewerPage");
-  const premiumViewerPage=document.getElementById("premiumViewerPage");
+      <div id="stat" class="stat">
+        <i class="fa-solid fa-chart-line"></i>
+        <span class="muted">Loading analytics…</span>
+      </div>
 
-  function showPage(page){
-    selectionScreen.classList.add("hidden");
-    viewerPage.classList.add("hidden");
-    premiumViewerPage.classList.add("hidden");
-    page.classList.remove("hidden");
-  }
-
-  document.getElementById("freeBtn").onclick=()=>{
-    showPage(viewerPage);
-    initFreeViewer();
-  };
-  document.getElementById("premiumBtn").onclick=()=>{
-    showPage(premiumViewerPage);
-    initPremiumViewer();
-  };
-
-  // --- Helper Functions ---
-  function lastDigit(num){ return parseInt(String(num).slice(-1))||0; }
-  function classify(num){ return lastDigit(num)>=5?"BIG":"SMALL"; }
-  function pillClass(v){ return "pill "+v.toLowerCase(); }
-
-  // --- Free Viewer ---
-  const PATTERN=["BIG","SMALL","BIG","SMALL","SMALL","BIG"];
-  function initFreeViewer(){
-    const tbody=document.getElementById("tbody-free");
-    tbody.innerHTML="";
-    bigwinDb.ref("bigwin/default").on("value",snap=>{
-      const v=snap.val();
-      if(!v||!v.list) return;
-      const list=Object.values(v.list).map(it=>({
-        issue:String(it.issueNumber||it.issue||""), number:it.number||0
-      }));
-      list.sort((a,b)=>b.issue-a.issue);
-      tbody.innerHTML="";
-      list.forEach((row)=>{
-        const actual=classify(row.number);
-        const idx=parseInt(row.issue)%PATTERN.length;
-        const predicted=PATTERN[idx];
-        const result=(predicted===actual)?"Win":"Lose";
-        tbody.innerHTML+=`
+      <div class="table-wrap">
+        <table>
+          <thead>
           <tr>
-            <td>${row.issue}</td>
-            <td>${row.number}</td>
-            <td><span class="${pillClass(actual)}">${actual}</span></td>
-            <td><span class="${pillClass(predicted)}">${predicted}</span></td>
-            <td class="${result.toLowerCase()}">${result}</td>
-          </tr>`;
-      });
-    });
-  }
+            <th><i class="fa-solid fa-hashtag"></i> Issue</th>
+            <th><i class="fa-solid fa-dice"></i> Number</th>
+            <th><i class="fa-solid fa-eye"></i> Actual</th>
+            <th><i class="fa-solid fa-brain"></i> Predicted</th>
+            <th><i class="fa-solid fa-trophy"></i> Result</th>
+            <th><i class="fa-solid fa-signal"></i> Confidence</th>
+          </tr>
+          </thead>
+          <tbody id="tbody">
+          <tr>
+            <td colspan="6" class="muted" style="text-align:center; padding:36px;">
+              <i class="fa-solid fa-brain fa-beat-fade" style="font-size:24px; margin-bottom:8px; display:block; color:var(--gold)"></i>
+              Loading premium data…
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-  // --- Advanced Premium Prediction (1000 history) ---
-  function advancedPrediction(history){
-    const lastData = history.slice(0,1000);
-    const digitCounts = Array(10).fill(0);
-    lastData.forEach(r=>{
-      const d = lastDigit(r.number);
-      digitCounts[d]++;
-    });
+    <p class="foot">UI styled with glassmorphism & neon glow — Premium unlocked (no key, no timer).</p>
+  </div>
 
-    // Top 3 likely digits
-    const topDigits = [...digitCounts.map((c,i)=>({digit:i,count:c}))]
-      .sort((a,b)=>b.count-a.count)
-      .slice(0,3)
-      .map(x=>x.digit);
-
-    const bigCount = lastData.filter(r=>r.actual==="BIG").length;
-    const smallCount = lastData.length - bigCount;
-
-    let prediction = bigCount > smallCount ? "SMALL" : "BIG";
-    let confidence = Math.max(bigCount, smallCount) / lastData.length || 0.5;
-
-    // Streak detection
-    const last10 = lastData.slice(0,10).map(r=>r.actual);
-    if(last10.every(v=>v==="BIG")) { prediction="SMALL"; confidence=0.92; }
-    else if(last10.every(v=>v==="SMALL")) { prediction="BIG"; confidence=0.92; }
-
-    // Confidence Level
-    let levelClass="level-low", levelText="LOW";
-    if(confidence >= 0.9){ levelClass="level-high"; levelText="HIGH"; }
-    else if(confidence >= 0.5){ levelClass="level-medium"; levelText="MEDIUM"; }
-
-    return {
-      prediction,
-      confidence:(confidence*100).toFixed(1),
-      likely: topDigits,
-      levelClass,
-      levelText
+  <script>
+    /* ===========================
+       Firebase (Premium Data Only)
+       =========================== */
+    const bigwinConfig = {
+      apiKey: "AIzaSyArgde3-Xn0boi6FO-ZfN6vPPMRdULPN24",
+      authDomain: "bigwin30-3d1e2.firebaseapp.com",
+      databaseURL: "https://bigwin30-3d1e2-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "bigwin30-3d1e2",
+      storageBucket: "bigwin30-3d1e2.appspot.com",
+      messagingSenderId: "214823361254",
+      appId: "1:214823361254:web:9b9f101f2134e2bc48f927",
+      measurementId: "G-E4YSHMD6X4"
     };
-  }
 
-  function initPremiumViewer(){
-    const tbody=document.getElementById("tbody-premium");
-    const warningBox=document.getElementById("warningBox");
-    tbody.innerHTML="";
-    warningBox.style.display="none";
+    const app = firebase.initializeApp(bigwinConfig, "bigwin-premium-only");
+    const db  = firebase.database(app);
 
-    bigwinDb.ref("bigwin/default").on("value",snap=>{
-      const v=snap.val();
-      if(!v||!v.list) return;
-      let list=Object.values(v.list).map(it=>({
-        issue:String(it.issueNumber||it.issue||""), 
-        number:it.number||0
-      }));
-      list.sort((a,b)=>b.issue-a.issue);
+    /* ===========================
+       Helpers
+       =========================== */
+    const toBigIntSafe = (x) => {
+      const s = String(x).replace(/\D/g,'') || "0";
+      try { return BigInt(s); } catch { return 0n; }
+    };
+    const lastDigit = (n) => {
+      const s = String(n).trim();
+      const d = parseInt(s[s.length-1], 10);
+      return Number.isNaN(d) ? 0 : d;
+    };
+    const classify = (num) => (lastDigit(num) >= 5 ? "BIG" : "SMALL");
+    const pillClass = (v) => v === "BIG" ? "pill big" : "pill small";
+    const modBI = (a, m) => { const mm = BigInt(m); let r = a % mm; if (r < 0) r += mm; return r; };
 
-      const history=list.map(r=>({issue:r.issue, number:r.number, actual:classify(r.number)}));
-      tbody.innerHTML="";
+    function downloadFile(filename, content, mime){
+      const blob = new Blob([content], {type:mime});
+      const url = URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url; a.download=filename; document.body.appendChild(a);
+      a.click(); URL.revokeObjectURL(url); a.remove();
+    }
 
-      let loseStreak=0;
-      history.forEach((row,i)=>{
-        const pred=advancedPrediction(history.slice(i+1));
-        const predictedText=`${pred.prediction} (${pred.likely.join(",")})`;
-        const result=(pred.prediction===row.actual)?"Win":"Lose";
-        if(result==="Lose") loseStreak++; else loseStreak=0;
-        tbody.innerHTML+=`
-          <tr>
-            <td>${row.issue}</td>
-            <td>${row.number}</td>
-            <td><span class="${pillClass(row.actual)}">${row.actual}</span></td>
-            <td><span class="${pillClass(pred.prediction)}">${predictedText}</span></td>
-            <td class="${result.toLowerCase()}">${result}</td>
-            <td>${pred.confidence}%</td>
-            <td class="${pred.levelClass}">${pred.levelText}</td>
-          </tr>`;
-      });
+    /* ===========================
+       Enhanced Premium Prediction
+       =========================== */
+    function enhancedPrediction(history){
+      const recent = history.slice(0, 12);
+      let prediction = "";
+      let confidence = "Low";
 
-      if(loseStreak>=3){
-        warningBox.innerHTML="⚠️ Warning: Pattern is shifting! BigWin logic may be unstable.";
-        warningBox.style.display="block";
+      // Premium results bias
+      const premiumResults = recent.filter(r => r.premium && r.premium !== "");
+      const premiumWinCount = premiumResults.filter(r => r.result === "Win").length;
+      const premiumWinRate = premiumResults.length ? (premiumWinCount / premiumResults.length) : 0;
+
+      if (premiumWinRate > 0.7 && premiumResults.length > 3){
+        const lastPremiumWin = premiumResults.find(r => r.result === "Win");
+        if (lastPremiumWin){
+          prediction = lastPremiumWin.predicted;
+          confidence = "Height";
+        }
       }
 
-      const nextPred=advancedPrediction(history);
-      document.getElementById("nextBox-premium").innerHTML=`
-        <p><strong>Next Prediction:</strong> 
-        <span class="pill ${nextPred.prediction.toLowerCase()}">${nextPred.prediction} (${nextPred.likely.join(",")})</span>
-        <span class="${nextPred.levelClass}">${nextPred.levelText}</span>
-        (Confidence: ${nextPred.confidence}%)</p>`;
+      // Pattern checks
+      if (!prediction && recent.length >= 4){
+        const last4 = recent.slice(0,4).map(r=>r.actual);
+        // same 4 times -> flip
+        if (last4.every(v=>v===last4[0])){
+          prediction = last4[0] === "BIG" ? "SMALL" : "BIG";
+          confidence = "Medium";
+        }
+        // alternating-ish
+        else if (last4[0]!==last4[1] && last4[1]!==last4[2] && last4[2]!==last4[3]){
+          prediction = last4[3];
+          confidence = "Medium";
+        }
+      }
+
+      // Distribution / recent wins
+      if (!prediction && recent.length >= 6){
+        const last6 = recent.slice(0,6).map(r=>r.actual);
+        const bigCount = last6.filter(v=>v==="BIG").length;
+        const winCount = recent.slice(0,6).filter(r=>r.result==="Win").length;
+
+        if (winCount > 4){
+          const lw = recent.find(r=>r.result==="Win");
+          if (lw){ prediction = lw.predicted; confidence="Medium"; }
+        } else if (bigCount <= 2){
+          prediction = "BIG"; confidence="Medium";
+        } else if (bigCount >= 4){
+          prediction = "SMALL"; confidence="Medium";
+        } else {
+          prediction = bigCount > 3 ? "SMALL" : "BIG";
+          confidence = "Low";
+        }
+      }
+
+      // Fallback
+      if (!prediction){
+        const rw = recent.filter(r=>r.result==="Win");
+        prediction = rw.length ? rw[0].predicted : (Math.random()>0.5 ? "BIG":"SMALL");
+        confidence = "Low";
+      }
+      return { prediction, confidence };
+    }
+
+    /* ===========================
+       UI Elements
+       =========================== */
+    const tbodyEl   = document.getElementById("tbody");
+    const statEl    = document.getElementById("stat");
+    const nextPill  = document.getElementById("next-pill");
+    const nextIssue = document.getElementById("next-issue");
+    const btnCsv    = document.getElementById("btnCsv");
+    const btnJson   = document.getElementById("btnJson");
+
+    let computedRows = [];
+    let headerInfo   = { nextIssue:"", nextPrediction:"", confidence:"" };
+
+    /* ===========================
+       Live Data Bind
+       =========================== */
+    const ref = db.ref("bigwin/default");
+    ref.on("value", (snap)=>{
+      const v = snap.val();
+      if (!v){ return; }
+
+      const raw = Array.isArray(v.list) ? v.list.filter(Boolean)
+                 : (v.list && typeof v.list === 'object' ? Object.values(v.list) : []);
+      let list = raw.map(it => ({
+        issueStr: String(it.issueNumber ?? it.issue ?? it.issue_no ?? "").trim(),
+        issueBI : toBigIntSafe(it.issueNumber ?? it.issue ?? it.issue_no ?? ""),
+        number  : it.number ?? it.result ?? it.openNumber ?? "",
+        premium : it.premium ?? ""
+      })).filter(it => it.issueStr.length>0);
+
+      if (list.length===0){
+        tbodyEl.innerHTML = `<tr><td colspan="6" class="muted" style="text-align:center; padding:36px;">
+          <i class="fa-solid fa-circle-exclamation" style="color:#ffb14d"></i> No premium data yet…
+        </td></tr>`;
+        nextPill.textContent = "—"; nextPill.className = "pill";
+        nextIssue.textContent = "Issue —";
+        statEl.innerHTML = `<i class="fa-solid fa-chart-line"></i> <span class="muted">No stats</span>`;
+        computedRows = [];
+        return;
+      }
+
+      // Sort newest->oldest for list, then we will compute rows oldest->newest to use history properly
+      list.sort((a,b)=> (b.issueBI > a.issueBI ? 1 : -1));
+
+      // Build computed rows (oldest to newest)
+      const base = list.map(row => ({
+        issue: row.issueStr,
+        number: String(row.number),
+        actual: classify(row.number),
+        predicted: "",
+        result: "",
+        premium: String(row.premium ?? ""),
+        confidence: ""
+      })).reverse(); // oldest -> newest
+
+      // compute predictions with history (previous items)
+      computedRows = base.map((row, idx, arr)=>{
+        const history = arr.slice(0, idx).reverse(); // recent first for our logic
+        const pred = enhancedPrediction(history);
+        const isWin = (pred.prediction === row.actual);
+        return { ...row, predicted: pred.prediction, result: isWin ? "Win" : "Lose", confidence: pred.confidence };
+      });
+
+      // render table (newest first for UI)
+      const rowsForUi = [...computedRows].reverse();
+      tbodyEl.innerHTML = "";
+      rowsForUi.forEach((row, i)=>{
+        const tr = document.createElement("tr");
+        tr.style.animation = `fadeIn .3s ease-out ${i*0.02}s both`;
+        const confColor =
+          row.confidence==="Height" ? "#00ffb2" :
+          row.confidence==="Medium" ? "#ffd54d" : "#9aa1b2";
+
+        tr.innerHTML = `
+          <td class="issue">${row.issue}</td>
+          <td style="font-weight:700;">${row.number}</td>
+          <td><span class="${pillClass(row.actual)}">${row.actual}</span></td>
+          <td><span class="${pillClass(row.predicted)}">${row.predicted}</span></td>
+          <td class="${row.result==='Win' ? 'win':'lose'}">${row.result}</td>
+          <td style="font-weight:800; color:${confColor}; font-size:.9rem;">${row.confidence}</td>
+        `;
+        tbodyEl.appendChild(tr);
+      });
+
+      // Stats
+      const total = computedRows.length;
+      const wins  = computedRows.filter(r=>r.result==="Win").length;
+      const acc   = total ? ((wins/total)*100).toFixed(1) : "0.0";
+      statEl.innerHTML =
+        `<i class="fa-solid fa-chart-line"></i>
+         <span> History — </span>
+         <b>Win: ${wins}</b>,
+         <b>Lose: ${total-wins}</b>
+         <span class="muted"> | Accuracy: ${acc}%</span>`;
+
+      // Next prediction from latest state
+      const latestIssue = list.reduce((mx, it)=> it.issueBI>mx?it.issueBI:mx, -1n);
+      const nextIssueStr = (latestIssue+1n).toString();
+      const next = enhancedPrediction([...computedRows].reverse()); // recent first
+      headerInfo = { nextIssue: nextIssueStr, nextPrediction: next.prediction, confidence: next.confidence };
+
+      nextPill.textContent = `${next.prediction} (${next.confidence})`;
+      nextPill.className = pillClass(next.prediction);
+      nextIssue.textContent = `Issue ${nextIssueStr}`;
     });
-  }
-</script>
+
+    /* ===========================
+       Export
+       =========================== */
+    btnCsv.addEventListener("click", ()=>{
+      const header = `Next Issue,${headerInfo.nextIssue}\nNext Prediction,${headerInfo.nextPrediction}\nConfidence,${headerInfo.confidence}\n\n`;
+      const cols = ["Issue","Number","Actual","Predicted","Result","Confidence","Premium"];
+      const rows = [...computedRows].reverse().map(r=>[
+        r.issue, r.number, r.actual, r.predicted, r.result, r.confidence, r.premium
+      ].map(x => `"${String(x).replace(/"/g,'""')}"`).join(","));
+      const csv = header + cols.join(",") + "\n" + rows.join("\n");
+      downloadFile(`premium_prediction_${Date.now()}.csv`, csv, "text/csv;charset=utf-8");
+    });
+
+    btnJson.addEventListener("click", ()=>{
+      const payload = { meta: headerInfo, rows: [...computedRows].reverse() };
+      const json = JSON.stringify(payload, null, 2);
+      downloadFile(`premium_prediction_${Date.now()}.json`, json, "application/json;charset=utf-8");
+    });
+  </script>
 </body>
 </html>
