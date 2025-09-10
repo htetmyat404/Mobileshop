@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Money Money Come Come 💸 — Bigwin Sayar! (Premium)</title>
   <meta name="description" content="Premium Big/Small prediction with pro UI" />
   <meta name="keywords" content="ck, lottery, wingo, big small, premium, prediction" />
@@ -41,8 +40,6 @@
       min-height:100vh;
     }
     .wrap{ max-width:1100px; margin:28px auto; padding: 16px; }
-
-    /* HEADER */
     .pro-header{
       position: relative;
       border-radius: 22px;
@@ -62,7 +59,6 @@
     }
     .subtitle{ font-size:1.3rem; font-weight:800; color:var(--gold); }
     .desc{ color:var(--sub); margin-top:6px; }
-
     .next-box{ margin-top:16px; display:flex; gap:12px; align-items:center; }
     .next-label{ font-weight:800; color:var(--neon); }
     .pill{
@@ -72,14 +68,10 @@
     .pill.big{ color:var(--pill-big); background:rgba(255,165,0,.16); }
     .pill.small{ color:var(--pill-small); background:rgba(0,170,255,.16); }
     .conf{ padding:6px 10px; border-radius:8px; border:1px solid rgba(0,255,178,.35); background:rgba(0,255,178,.08); }
-
-    /* CARD */
     .card{ background: var(--card-grad); border:1px solid var(--border); border-radius:18px; box-shadow: var(--soft); }
     .card-head{ display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
     .tools{ display:flex; gap:10px; }
     .btn{ padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--text); font-weight:700; cursor:pointer; }
-
-    /* TABLE */
     table{ width:100%; border-collapse:collapse; }
     thead th{ padding:10px; text-align:left; font-size:.85rem; border-bottom:1px solid var(--border); }
     tbody td{ padding:10px; border-bottom:1px solid rgba(255,255,255,.06); }
@@ -150,35 +142,43 @@ const pillClass = (v) => v === "BIG" ? "pill big" : "pill small";
 
 function enhancedPrediction(history){
   const recent = history.slice(0, 20);
-  let prediction = "", confidence = "Low";
+  let prediction = "", confidence = 0;
   const premiumResults = recent.filter(r => r.premium && r.premium !== "");
   const premiumWinCount = premiumResults.filter(r => r.result === "Win").length;
   const premiumWinRate = premiumResults.length ? (premiumWinCount / premiumResults.length) : 0;
+
   if (premiumWinRate > 0.65 && premiumResults.length >= 5){
     const lastPremiumWin = premiumResults.find(r => r.result === "Win");
-    if (lastPremiumWin){ prediction = lastPremiumWin.predicted; confidence = "Height"; }
+    if (lastPremiumWin){ prediction = lastPremiumWin.predicted; confidence = 80; }
   }
   if (!prediction && recent.length >= 5){
     const streakType = recent[0].actual;
     const streakLen = recent.findIndex(r => r.actual !== streakType);
-    if (streakLen >= 4){ prediction = streakType === "BIG" ? "SMALL" : "BIG"; confidence = "Medium"; }
+    if (streakLen >= 4){ prediction = streakType === "BIG" ? "SMALL" : "BIG"; confidence = 60; }
   }
   if (!prediction && recent.length >= 10){
     const bigCount = recent.filter(v=>v.actual==="BIG").length;
     const smallCount = recent.length - bigCount;
-    if (bigCount - smallCount >= 4){ prediction = "SMALL"; confidence="Medium"; }
-    else if (smallCount - bigCount >= 4){ prediction = "BIG"; confidence="Medium"; }
+    if (bigCount - smallCount >= 4){ prediction = "SMALL"; confidence=55; }
+    else if (smallCount - bigCount >= 4){ prediction = "BIG"; confidence=55; }
   }
   if (!prediction){
     const lastWin = recent.find(r => r.result === "Win");
-    if (lastWin){ prediction = lastWin.predicted; confidence = "Medium"; }
+    if (lastWin){ prediction = lastWin.predicted; confidence=50; }
   }
   if (!prediction){
     const bigBias = recent.filter(r=>r.actual==="BIG").length;
     prediction = bigBias > recent.length/2 ? "BIG" : "SMALL";
-    confidence = "Low";
+    confidence = 40;
   }
-  return { prediction, confidence };
+
+  // Low/Medium/High string
+  let confidenceStr = "";
+  if(confidence >= 75) confidenceStr = "High";
+  else if(confidence >= 50) confidenceStr = "Medium";
+  else confidenceStr = "Low";
+
+  return { prediction, confidence, confidenceStr };
 }
 
 const tbodyEl = document.getElementById("tbody");
@@ -214,13 +214,13 @@ db.ref("bigwin/default").on("value", (snap)=>{
     const history = arr.slice(0, idx).reverse();
     const pred = enhancedPrediction(history);
     const isWin = (pred.prediction === row.actual);
-    return { ...row, predicted: pred.prediction, result: isWin ? "Win" : "Lose", confidence: pred.confidence };
+    return { ...row, predicted: pred.prediction, result: isWin ? "Win" : "Lose", confidence: pred.confidence, confidenceStr: pred.confidenceStr };
   });
 
   const rowsForUi = [...computedRows].reverse();
   tbodyEl.innerHTML = "";
   rowsForUi.forEach(row=>{
-    const confColor = row.confidence==="Height" ? "#00ffb2" : row.confidence==="Medium" ? "#ffd54d" : "#9aa1b2";
+    const confColor = row.confidenceStr==="High" ? "#00ffb2" : row.confidenceStr==="Medium" ? "#ffd54d" : "#9aa1b2";
     tbodyEl.innerHTML += `
       <tr>
         <td class="issue">${row.issue}</td>
@@ -229,7 +229,7 @@ db.ref("bigwin/default").on("value", (snap)=>{
         <td><span class="${pillClass(row.predicted)}">${row.predicted}</span></td>
         <td class="${row.result==='Win'?'win':'lose'}">${row.result}</td>
         <td>${row.premium || "-"}</td>
-        <td style="color:${confColor}; font-weight:800;">${row.confidence}</td>
+        <td style="color:${confColor}; font-weight:800;">${row.confidenceStr} (${row.confidence}%)</td>
       </tr>
     `;
   });
@@ -237,7 +237,7 @@ db.ref("bigwin/default").on("value", (snap)=>{
   const latestIssue = list.reduce((mx, it)=> it.issueBI>mx?it.issueBI:mx, -1n);
   const nextIssueStr = (latestIssue+1n).toString();
   const next = enhancedPrediction([...computedRows].reverse());
-  nextPill.textContent = `${next.prediction} (${next.confidence})`;
+  nextPill.textContent = `${next.prediction} (${next.confidenceStr} ${next.confidence}%)`;
   nextPill.className = pillClass(next.prediction);
   nextIssue.textContent = `Issue ${nextIssueStr}`;
 });
